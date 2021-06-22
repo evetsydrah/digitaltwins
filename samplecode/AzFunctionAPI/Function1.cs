@@ -28,21 +28,13 @@ namespace AssetData
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string adtInstanceUrl = "https://adtdemorock.api.sea.digitaltwins.azure.net";            
+            string adtInstanceUrl = "<<INSERT YOUR ADT API HERE>>";  //TODO : you can change this to retrieve from AppSetting           
             
             try
-            {
-                string userAssignedClientId = "a30353ea-2e52-4146-a6f7-61b68c04729c";
-
-                //var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });                
-
-                //var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+            {                
                 var credential = new DefaultAzureCredential();
 
-                //var client = new DigitalTwinsClient(new Uri(adtInstanceUrl), credential);
-
-                var client = new DigitalTwinsClient(new Uri(adtInstanceUrl), credential, new DigitalTwinsClientOptions { Transport = new HttpClientTransport(httpClient) });
-                
+                var client = new DigitalTwinsClient(new Uri(adtInstanceUrl), credential, new DigitalTwinsClientOptions { Transport = new HttpClientTransport(httpClient) });                
 
                 string query = "SELECT * FROM digitaltwins";
                 AsyncPageable<BasicDigitalTwin> queryResult = client.QueryAsync<BasicDigitalTwin>(query);
