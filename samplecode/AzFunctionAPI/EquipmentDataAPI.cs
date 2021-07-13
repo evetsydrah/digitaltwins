@@ -47,13 +47,16 @@ namespace DigitalTwin
                     Console.WriteLine("---------------");
 
                     Response<BasicDigitalTwin> getBasicDtResponse = await client.GetDigitalTwinAsync<BasicDigitalTwin>(twin.Id);
-                    BasicDigitalTwin basicDt = getBasicDtResponse.Value;
+                    BasicDigitalTwin basicDt = getBasicDtResponse.Value;                    
 
                     if (basicDt != null)
                     {
                         Equipment equip = new Equipment();
                         equip = JsonConvert.DeserializeObject<Equipment>(System.Text.Json.JsonSerializer.Serialize(basicDt));
                         equip.assetId = basicDt.Id;
+
+                        equip.relationships = await GetRelationship(client, twin.Id);
+
                         lstEquipmentData.Add(equip);                        
                     }
                 }
@@ -65,6 +68,23 @@ namespace DigitalTwin
                 return new BadRequestObjectResult(ex);
             }           
          
+        }
+
+        static async Task<List<Relationship>> GetRelationship(DigitalTwinsClient client, string twinId)
+        {
+            List<Relationship> rels = new List<Relationship>();
+            AsyncPageable<BasicRelationship> relationships = client.GetRelationshipsAsync<BasicRelationship>(twinId);
+            await foreach (BasicRelationship relationship in relationships)
+            {                
+                Relationship rel = new Relationship();
+                rel.Id = relationship.Id;
+                rel.SourceId = relationship.SourceId;
+                rel.TargetId = relationship.TargetId;
+                rel.Name = relationship.Name;
+                rels.Add(rel);
+            }
+
+            return rels;
         }
     }
 }

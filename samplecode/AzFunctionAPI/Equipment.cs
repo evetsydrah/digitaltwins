@@ -12,7 +12,17 @@ namespace DigitalTwin
         public string model { get; set; }
         public string serial { get; set; }
         public string group { get; set; }
-        public string vendor { get; set; }        
+        public string vendor { get; set; }     
+        
+        public List<Relationship> relationships { get; set; }
 
+    }
+
+    public class Relationship
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string SourceId { get; set; }
+        public string TargetId { get; set; }
     }
 }
