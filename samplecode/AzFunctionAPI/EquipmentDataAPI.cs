@@ -17,13 +17,13 @@ using System.Net.Http;
 
 namespace DigitalTwin
 {
-    public static class AssetDataAPI
+    public static class EquipmentDataAPI
     {
         private static readonly HttpClient httpClient = new HttpClient();
 
-        [FunctionName("AssetDataAPI")]
+        [FunctionName("EquipmentDataAPI")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -34,27 +34,31 @@ namespace DigitalTwin
             {                
                 var credential = new DefaultAzureCredential();
 
-                var client = new DigitalTwinsClient(new Uri(adtInstanceUrl), credential, new DigitalTwinsClientOptions { Transport = new HttpClientTransport(httpClient) });                
+                var client = new DigitalTwinsClient(new Uri(adtInstanceUrl), credential, new DigitalTwinsClientOptions { Transport = new HttpClientTransport(httpClient) });
 
-                string query = "SELECT * FROM digitaltwins";
+                string query = @"SELECT * FROM digitaltwins WHERE IS_OF_MODEL('dtmi:twinlogic:equipment;1')";
+                
                 AsyncPageable<BasicDigitalTwin> queryResult = client.QueryAsync<BasicDigitalTwin>(query);
 
-                List<AssetData> lstAssetData = new List<AssetData>();
+                List<Equipment> lstEquipmentData = new List<Equipment>();
                 await foreach (BasicDigitalTwin twin in queryResult)
-                {
-                    var something = JsonConvert.DeserializeObject(System.Text.Json.JsonSerializer.Serialize(twin));
+                {                    
                     Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(twin));
                     Console.WriteLine("---------------");
-                    if (twin.Id.Contains("Asset"))
+
+                    Response<BasicDigitalTwin> getBasicDtResponse = await client.GetDigitalTwinAsync<BasicDigitalTwin>(twin.Id);
+                    BasicDigitalTwin basicDt = getBasicDtResponse.Value;
+
+                    if (basicDt != null)
                     {
-                        AssetData assets = new AssetData();
-                        assets = JsonConvert.DeserializeObject<AssetData>(System.Text.Json.JsonSerializer.Serialize(twin));
-                        assets.assetId = twin.Id;
-                        lstAssetData.Add(assets);                        
+                        Equipment equip = new Equipment();
+                        equip = JsonConvert.DeserializeObject<Equipment>(System.Text.Json.JsonSerializer.Serialize(basicDt));
+                        equip.assetId = basicDt.Id;
+                        lstEquipmentData.Add(equip);                        
                     }
                 }
 
-                return new OkObjectResult(JsonConvert.SerializeObject(lstAssetData));
+                return new OkObjectResult(JsonConvert.SerializeObject(lstEquipmentData));
             }
             catch(Exception ex)
             {                

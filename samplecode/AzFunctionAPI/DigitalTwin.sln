@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31409.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetData", "AssetData.csproj", "{5F251FD2-328D-48E0-94B7-52ED0A5EDFE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalTwin", "DigitalTwin.csproj", "{5F251FD2-328D-48E0-94B7-52ED0A5EDFE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
