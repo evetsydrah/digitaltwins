@@ -14,9 +14,9 @@ This tool mainly used to connect to Azure Digital Twin via [Azure Identity](http
     1. Using Azure CLI
     1. Assign access role <br />
     ```az functionapp identity show -g <your-resource-group> -n <your-App-Service-function-app-name>```
-    1. If the result is empty, create a new system-managed identity
+    1. If the result is empty, create a new system-managed identity <br />
     ```az functionapp identity assign --resource-group <your-resource-group> --name <your-App-Service-function-app-name>```
-    1. Assign Azure Function system identity to the Azure Digital Twins Data Owner
+    1. Assign Azure Function system identity to the Azure Digital Twins Data Owner <br />
     ```az dt role-assignment create --dt-name <your-Azure-Digital-Twins-instance> --assignee "<principal-ID>" --role "Azure Digital Twins Data Owner"```
     1. Build and publish the application to Azure Function (you can automate this using Github Action)
 
